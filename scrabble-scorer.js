@@ -12,6 +12,8 @@ const oldPointStructure = {
   10: ['Q', 'Z']
 };
 
+
+
 function oldScrabbleScorer(word) {
 	word = word.toUpperCase();
 	let letterPoints = "";
@@ -29,29 +31,142 @@ function oldScrabbleScorer(word) {
 	return letterPoints;
  }
 
-// your job is to finish writing these functions and variables that we've named //
-// don't change the names or your program won't work as expected. //
-
-function initialPrompt() {
-   console.log("Let's play some scrabble! Enter a word:");
+ function transform(oldPointStructure) {
+   let newPointStruct={};
+   let newKey = "";
+   
+   for (const key in oldPointStructure) {     
+       
+       for(let i=0;i< oldPointStructure[key].length;i++){   
+         newKey = oldPointStructure[key][i];          
+         
+         newPointStruct[newKey.toLowerCase()] =  Number(key);         
+         
+       }     
+   }  
+   
+   return newPointStruct;
 };
 
-let simpleScorer;
+let newPointStructure = transform(oldPointStructure);
+//Bonus Mission 2
+newPointStructure[' ']=0;
 
-let vowelBonusScorer;
+//Bonus Mission-functions to check special characters and numbers in string
+function containsSplChars(string){
+   const specialChars = "~`!#$%^&*+=-[]\\\';,/{}|\":<>?";
+   for(i = 0; i < specialChars.length;i++){
+     if(string.indexOf(specialChars[i]) > -1){
+         return true;
+      }
+   }
+   return false;
+  }
 
-let scrabbleScorer;
+function containsNumber(str){   
+   return /\d/.test(str);
+}
 
-const scoringAlgorithms = [];
+// your job is to finish writing these functions and variables that we've named //
+// don't change the names or your program won't work as expected. //
+let word= "";
+function initialPrompt() {
+   word = input.question("Let's play some scrabble!\nEnter a word: ");
+   //Bonus Mission
+   while(containsSplChars(word) || containsNumber(word)){
+    word = input.question("Enter valid word with only letters: ");
+   }
+  return word;
+};
 
-function scorerPrompt() {}
 
-function transform() {};
 
-let newPointStructure;
+
+let simpleScorer = function(word){   
+  	return word.length;
+}
+
+let vowelBonusScorer= function(word){
+   let vowels = ['A','E','I','O','U'];
+   word = word.toUpperCase();
+   let letterPoints=0;
+
+   for (let i = 0; i < word.length; i++) {
+      if(vowels.includes(word[i])){
+         letterPoints += 3;
+      }else{
+         letterPoints += 1;
+      }        
+    }  
+    return letterPoints;
+}
+
+let scrabbleScorer = function(word){
+   word = word.toLowerCase();
+	let letterPoints = 0;
+   
+	for (let i = 0; i < word.length; i++) {  
+      
+		 if (word[i] in newPointStructure) {
+			letterPoints += newPointStructure[word[i]];
+		 }  
+	}  
+   
+	return letterPoints;
+}
+
+let scoringAlgorithmsArray = [
+   {
+      name:"Simple Score",
+      description: "Each letter is worth 1 point",
+      scoringFunction: simpleScorer
+   },
+   {
+      name:"Bonus Vowels",
+      description: "Vowels are 3 pts, consonants are 1 pt",
+      scoringFunction: vowelBonusScorer
+   },
+   {
+      name:"Scrabble",
+      description: "The traditional scoring algorithm",
+      scoringFunction: scrabbleScorer
+   }];
+
+   const scoringAlgorithms =[{
+      scorerFunction: simpleScorer
+   },
+   {
+      scorerFunction: vowelBonusScorer
+   },
+   {
+      scorerFunction: scrabbleScorer
+   }];
+
+function scorerPrompt() {
+  
+   console.log(`\nWhich scoring algorithm would you like to use?\n`);
+
+   for(let i=0;i<scoringAlgorithmsArray.length;i++){
+      console.log(`${i} - ${scoringAlgorithmsArray[i].name}: ${scoringAlgorithmsArray[i].description}`);
+   }
+   let scoringOption = input.question(`Enter 0, 1, or 2: `);
+   while(scoringOption.match(/[A-Za-z]/) || scoringOption <0 || scoringOption >2 || containsSplChars(scoringOption)){
+      scoringOption = input.question(`Enter valid scoring alogorithm option:`);
+   }
+   
+   console.log(`Score for '${word}': ${scoringAlgorithms[scoringOption].scorerFunction(word)}`)
+   
+}
+
+
+
+
+
+
 
 function runProgram() {
    initialPrompt();
+   scorerPrompt();
    
 }
 
