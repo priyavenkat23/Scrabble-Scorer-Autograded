@@ -115,39 +115,30 @@ let scrabbleScorer = function(word){
 	return letterPoints;
 }
 
-let scoringAlgorithmsArray = [
+const scoringAlgorithms = [
    {
       name:"Simple Score",
       description: "Each letter is worth 1 point",
-      scoringFunction: simpleScorer
+      scorerFunction: simpleScorer
    },
    {
       name:"Bonus Vowels",
       description: "Vowels are 3 pts, consonants are 1 pt",
-      scoringFunction: vowelBonusScorer
+      scorerFunction: vowelBonusScorer
    },
    {
       name:"Scrabble",
       description: "The traditional scoring algorithm",
-      scoringFunction: scrabbleScorer
-   }];
-
-   const scoringAlgorithms =[{
-      scorerFunction: simpleScorer
-   },
-   {
-      scorerFunction: vowelBonusScorer
-   },
-   {
       scorerFunction: scrabbleScorer
    }];
 
+   
 function scorerPrompt() {
   
    console.log(`\nWhich scoring algorithm would you like to use?\n`);
 
-   for(let i=0;i<scoringAlgorithmsArray.length;i++){
-      console.log(`${i} - ${scoringAlgorithmsArray[i].name}: ${scoringAlgorithmsArray[i].description}`);
+   for(let i=0;i<scoringAlgorithms.length;i++){
+      console.log(`${i} - ${scoringAlgorithms[i].name}: ${scoringAlgorithms[i].description}`);
    }
    let scoringOption = input.question(`Enter 0, 1, or 2: `);
    while(scoringOption.match(/[A-Za-z]/) || scoringOption <0 || scoringOption >2 || containsSplChars(scoringOption)){
